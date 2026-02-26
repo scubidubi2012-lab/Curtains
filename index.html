@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Wedding Invitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --baby-pink: #fce4ec;
+            --marigold: #ffb300;
+            --royal-purple: #4a148c;
+            --deep-red: #b71c1c;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: var(--baby-pink);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* --- CURTAIN ANIMATION --- */
+        .curtain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 999;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .curtain {
+            width: 50%;
+            height: 100%;
+            background: var(--deep-red);
+            position: relative;
+            transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: all;
+            display: flex;
+            align-items: center;
+        }
+
+        .left-curtain { 
+            justify-content: flex-end; 
+            border-right: 2px solid var(--marigold);
+        }
+        .right-curtain { 
+            justify-content: flex-start;
+            border-left: 2px solid var(--marigold);
+        }
+
+        /* The "Tied" Look */
+        .curtain::after {
+            content: "✿";
+            position: absolute;
+            top: 50%;
+            font-size: 2rem;
+            color: var(--marigold);
+        }
+        .left-curtain::after { right: -15px; }
+        .right-curtain::after { left: -15px; }
+
+        .curtain-container.open .left-curtain { transform: translateX(-100%); }
+        .curtain-container.open .right-curtain { transform: translateX(100%); }
+
+        /* --- PAGE LAYOUT --- */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 50px 20px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Flower Corners */
+        .flower { position: absolute; width: 80px; height: 80px; font-size: 3rem; z-index: 10; }
+        .tl { top: 10px; left: 10px; }
+        .tr { top: 10px; right: 10px; }
+        .bl { bottom: 10px; left: 10px; }
+        .br { bottom: 10px; right: 10px; }
+
+        /* --- TEXT ANIMATIONS --- */
+        .animate-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: 1s all ease;
+        }
+        .active .animate-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; color: var(--deep-red); font-size: 3rem; margin: 10px; }
+        h2 { font-family: 'Playfair Display', serif; font-style: italic; color: var(--royal-purple); font-size: 2.5rem; }
+        
+        .namaskar-img { width: 60px; margin: 10px; }
+        .ghibli-couple { 
+            width: 280px; 
+            border-radius: 50%; 
+            border: 5px solid var(--marigold);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .qr-code {
+            background: white;
+            padding: 10px;
+            border: 2px solid var(--marigold);
+            margin-top: 20px;
+        }
+
+        .open-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            padding: 15px 30px;
+            background: var(--marigold);
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="curtain-container" id="curtainWrapper">
+        <button class="open-btn" onclick="openCurtain()">Tap to Open Invitation</button>
+        <div class="curtain left-curtain"></div>
+        <div class="curtain right-curtain"></div>
+    </div>
+
+    <section class="section" id="page1">
+        <div class="flower tl">🌸</div><div class="flower tr">🌸</div>
+        <div class="flower bl">🌸</div><div class="flower br">🌸</div>
+        
+        <div class="animate-text" style="transition-delay: 0.2s;">
+            <img src="https://img.icons8.com/color/96/namaste.png" class="namaskar-img" alt="Namaskar">
+            <h1>Wedding Invitation</h1>
+            <img src="https://img.icons8.com/color/96/namaste.png" class="namaskar-img" alt="Namaskar">
+            <p style="max-width: 300px; font-weight: 500;">"Grace us with your presence to make our day even more special for us"</p>
+        </div>
+    </section>
+
+    <section class="section" id="page2" style="background: #fff9c4;">
+        <div class="flower tl">🌻</div><div class="flower tr">🌻</div>
+        <div class="flower bl">🌻</div><div class="flower br">🌻</div>
+
+        <div class="animate-text">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=bridegroom" class="ghibli-couple" alt="Maharashtrian Couple">
+            <h2 style="margin-top: 20px;">Ishan & Ananya</h2>
+            <p><i>(Dhoti Kurta & Nauvari Saree)</i></p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="flower tl">🌹</div><div class="flower tr">🌹</div>
+        <div class="flower bl">🌹</div><div class="flower br">🌹</div>
+
+        <div class="animate-text">
+            <h2>The Royal Palace</h2>
+            <p><strong>Date:</strong> March 12, 2027</p>
+            <p><strong>Time:</strong> 10:00 AM Onwards</p>
+            
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PalaceVenueLocation" alt="Venue QR">
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Scan for Venue Location</p>
+        </div>
+    </section>
+
+    <script>
+        function openCurtain() {
+            document.getElementById('curtainWrapper').classList.add('open');
+            document.querySelector('.open-btn').style.display = 'none';
+            // Start text animations
+            setTimeout(reveal, 1000);
+        }
+
+        function reveal() {
+            var reveals = document.querySelectorAll(".section");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+
+        window.addEventListener("scroll", reveal);
+    </script>
+</body>
+</html>
