@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --silk-color: #8b0000; /* Deep Silk Red */
+            --gold: #d4af37;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #fffaf0; /* Floral White */
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* --- Curtain Animation --- */
+        .curtain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .curtain-side {
+            width: 50%;
+            height: 100%;
+            background: var(--silk-color);
+            background-image: repeating-linear-gradient(to right, transparent, rgba(0,0,0,0.2) 20px, transparent 40px);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+            transition: transform 4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+        }
+
+        .curtain-left { transform-origin: left; }
+        .curtain-right { transform-origin: right; }
+
+        /* Automatic opening class */
+        .open .curtain-left { transform: scaleX(0); }
+        .open .curtain-right { transform: scaleX(0); }
+
+        /* --- Content Styling --- */
+        .invitation-wrapper {
+            position: relative;
+            height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            text-align: center;
+            color: #333;
+        }
+
+        section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: start;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 { font-size: 3.5rem; font-weight: 700; color: var(--gold); margin-bottom: 10px; }
+        .greetings { font-size: 1.2rem; max-width: 600px; line-height: 1.6; }
+        .names { font-size: 4rem; font-style: italic; }
+        .venue-info { font-size: 1.5rem; line-height: 2; }
+        
+        .qr-placeholder {
+            width: 150px;
+            height: 150px;
+            background: #eee;
+            border: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        /* --- Petals Canvas --- */
+        #petalCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="curtain-container" id="curtainWrapper">
+        <div class="curtain-side curtain-left"></div>
+        <div class="curtain-side curtain-right"></div>
+    </div>
+
+    <canvas id="petalCanvas"></canvas>
+
+    <div class="invitation-wrapper">
+        <section id="page1">
+            <h1>Wedding Invitation</h1>
+            <p class="greetings">Grace us with your presence to make our day even more special for us.</p>
+        </section>
+
+        <section id="page2">
+            <div class="names">The Groom & The Bride</div>
+        </section>
+
+        <section id="page3">
+            <div class="venue-info">
+                <strong>Venue:</strong> The Grand Palace<br>
+                <strong>Date:</strong> March 12, 2027<br>
+                <strong>Time:</strong> 10:00 AM Onwards
+            </div>
+            <div class="qr-placeholder">
+                <small>[QR CODE HERE]</small>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Automatic Curtain Opening
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('curtainWrapper').classList.add('open');
+                revealSections();
+            }, 1000);
+        });
+
+        // Intersection Observer for Animation Mode
+        const sections = document.querySelectorAll('section');
+        const revealSections = () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.3 });
+            
+            sections.forEach(s => observer.observe(s));
+        };
+
+        // --- Rose Petal Rain Logic ---
+        const canvas = document.getElementById('petalCanvas');
+        const ctx = canvas.getContext('2d');
+        let petals = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 10 + 5;
+                this.speed = Math.random() * 2 + 1;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 2 - 1;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle * Math.PI / 180);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size/1.5, 0, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(255, 183, 197, 0.8)"; // Rose Pink
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.y += this.speed;
+                this.angle += this.spin;
+                if (this.y > canvas.height) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+        }
+
+        for (let i = 0; i < 50; i++) petals.push(new Petal());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            petals.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
