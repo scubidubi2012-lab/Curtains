@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <style>
+        :root {
+            --silk-color: #8B0000;
+            --gold: #D4AF37;
+            --text-white: #fff5e6;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            font-family: 'Georgia', serif;
+        }
+
+        /* --- Curtain Animation --- */
+        .curtain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            cursor: pointer;
+        }
+
+        .curtain {
+            width: 50%;
+            height: 100%;
+            background: var(--silk-color);
+            background-image: repeating-linear-gradient(90deg, transparent, rgba(0,0,0,0.2) 20px, transparent 40px);
+            transition: transform 3s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .curtain.left { transform-origin: left; }
+        .curtain.right { transform-origin: right; }
+
+        .curtain-container.open .left { transform: scaleX(0.05) skewY(5deg); }
+        .curtain-container.open .right { transform: scaleX(0.05) skewY(-5deg); }
+        .curtain-container.open { pointer-events: none; }
+
+        /* --- Content Layout --- */
+        .main-stage {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--gold);
+        }
+
+        .page {
+            position: absolute;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 2s ease-in forwards;
+            padding: 20px;
+        }
+
+        .active { display: flex; }
+
+        /* --- Typography & Animations --- */
+        h1 { font-weight: bold; font-size: 3rem; margin-bottom: 20px; }
+        .italic { font-style: italic; font-size: 2.5rem; }
+        .greeting { font-size: 1.5rem; color: var(--text-white); max-width: 600px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Rose Petal Rain --- */
+        .petal {
+            position: fixed;
+            top: -10%;
+            color: #ff4d4d;
+            user-select: none;
+            z-index: 50;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* --- Navigation --- */
+        .nav-btn {
+            position: fixed;
+            bottom: 30px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 10px 20px;
+            cursor: pointer;
+            z-index: 60;
+            border-radius: 5px;
+        }
+        .nav-btn:hover { background: var(--gold); color: black; }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            padding: 10px;
+            margin: 20px;
+            border: 4px solid var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="curtain-container" id="curtainWrapper" onclick="openCurtains()">
+        <div class="curtain left"></div>
+        <div class="curtain right"></div>
+    </div>
+
+    <div class="main-stage">
+        
+        <div class="page active" id="page1">
+            <h1>WEDDING INVITATION</h1>
+            <p class="greeting">"Grace us with your presence to make our day even more special for us"</p>
+        </div>
+
+        <div class="page" id="page2">
+            <p class="italic">Alexander & Isabella</p>
+        </div>
+
+        <div class="page" id="page3">
+            <h2>Venue: The Royal Palace</h2>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://maps.google.com" alt="QR Code">
+            </div>
+            <h3>March 12, 2027</h3>
+            <p>10 AM Onwards</p>
+        </div>
+
+    </div>
+
+    <button class="nav-btn" onclick="nextPage()">Next Page</button>
+
+    <script>
+        // Open Curtains Function
+        function openCurtains() {
+            document.getElementById('curtainWrapper').classList.add('open');
+            createPetals();
+        }
+
+        // Page Navigation
+        let currentPage = 1;
+        function nextPage() {
+            document.getElementById(`page${currentPage}`).classList.remove('active');
+            currentPage = currentPage < 3 ? currentPage + 1 : 1;
+            document.getElementById(`page${currentPage}`).classList.add('active');
+        }
+
+        // Rose Petal Rain Generator
+        function createPetals() {
+            const petalCount = 30;
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.innerHTML = '🌸'; // Petal Emoji
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                petal.style.fontSize = (Math.random() * 10 + 15) + 'px';
+                petal.style.opacity = Math.random();
+                document.body.appendChild(petal);
+            }
+        }
+    </script>
+</body>
+</html>
