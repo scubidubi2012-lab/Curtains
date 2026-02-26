@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --silk-color: #8B0000; /* Deep Silk Red */
+            --gold: #D4AF37;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #fffaf0;
+            font-family: 'Playfair Display', serif;
+            overflow: hidden;
+        }
+
+        /* --- Theater Curtain Animation --- */
+        .curtain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .curtain-half {
+            width: 50%;
+            height: 100%;
+            background: var(--silk-color);
+            background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.1) 0px, rgba(255,255,255,0.1) 20px, rgba(0,0,0,0.1) 40px);
+            transition: transform 3s cubic-bezier(0.645, 0.045, 0.355, 1);
+            pointer-events: auto;
+        }
+
+        .left-curtain { transform-origin: left; border-right: 2px solid var(--gold); }
+        .right-curtain { transform-origin: right; border-left: 2px solid var(--gold); }
+
+        .curtain-container.open .left-curtain { transform: scaleX(0); }
+        .curtain-container.open .right-curtain { transform: scaleX(0); }
+
+        /* --- Petals Rain --- */
+        #petal-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* --- Invitation Content --- */
+        .section {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+        }
+
+        .section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 { font-size: 4rem; margin-bottom: 20px; font-weight: 700; color: #333; }
+        .italic { font-style: italic; font-weight: 400; color: var(--silk-color); }
+        p { font-size: 1.5rem; padding: 0 20px; max-width: 600px; }
+        
+        .qr-placeholder {
+            width: 150px;
+            height: 150px;
+            background: #ddd;
+            margin: 20px auto;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn {
+            position: fixed;
+            bottom: 30px;
+            padding: 10px 25px;
+            background: var(--gold);
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 60;
+            border-radius: 20px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body onclick="openCurtains()">
+
+    <div class="curtain-container" id="curtain">
+        <div class="curtain-half left-curtain"></div>
+        <div class="curtain-half right-curtain"></div>
+    </div>
+
+    <div id="petal-container"></div>
+
+    <div class="section active" id="page1">
+        <h1>WEDDING INVITATION</h1>
+        <p>"Grace us with your presence to make our day even more special for us"</p>
+    </div>
+
+    <div class="section" id="page2">
+        <h1 class="italic">Romeo & Juliet</h1>
+        <p>Are getting married!</p>
+    </div>
+
+    <div class="section" id="page3">
+        <h1>Grand Palace Venue</h1>
+        <div class="qr-placeholder">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PalaceLocation" alt="QR Code">
+        </div>
+        <p>March 12, 2027<br>10 AM Onwards</p>
+    </div>
+
+    <button class="nav-btn" onclick="nextPage(event)">Next Page</button>
+
+    <script>
+        // Opening the curtain
+        function openCurtains() {
+            document.getElementById('curtain').classList.add('open');
+        }
+
+        // Simple Page Navigation
+        let currentPage = 1;
+        function nextPage(e) {
+            e.stopPropagation();
+            document.getElementById(`page${currentPage}`).classList.remove('active');
+            currentPage = (currentPage % 3) + 1;
+            document.getElementById(`page${currentPage}`).classList.add('active');
+        }
+
+        // Falling Petals Logic
+        function createPetal() {
+            const container = document.getElementById('petal-container');
+            const petal = document.createElement('div');
+            
+            const size = Math.random() * 15 + 10 + 'px';
+            petal.style.width = size;
+            petal.style.height = size;
+            petal.style.background = 'pink';
+            petal.style.borderRadius = '50% 0 50% 50%';
+            petal.style.position = 'absolute';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.top = '-20px';
+            petal.style.opacity = Math.random();
+            petal.style.boxShadow = '0 0 5px rgba(255,182,193,0.5)';
+            
+            const duration = Math.random() * 3 + 4;
+            petal.animate([
+                { transform: `translateY(0) rotate(0deg)` },
+                { transform: `translateY(110vh) rotate(360deg) translateX(${Math.random() * 100 - 50}px)` }
+            ], {
+                duration: duration * 1000,
+                easing: 'linear'
+            });
+
+            container.appendChild(petal);
+            setTimeout(() => petal.remove(), duration * 1000);
+        }
+
+        setInterval(createPetal, 300);
+    </script>
+</body>
+</html>
